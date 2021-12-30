@@ -68,7 +68,7 @@ async def post_base64Image(request: Request):
         pr_mask = (pr_mask * 255.0).astype(np.uint8)
 
         if imgstr.get("mask_type") == "rgba":
-            rgb = image_m * pr_mask # cv2.merge((pr_mask,pr_mask,pr_mask))
+            rgb = cv2.bitwise_and(image_m, image_m, mask = pr_mask) # cv2.merge((pr_mask,pr_mask,pr_mask))
             rgba = cv2.cvtColor(rgb, cv2.COLOR_RGB2RGBA)
 
             rgba[:, :, 3] = pr_mask
@@ -87,7 +87,8 @@ async def post_base64Image(request: Request):
             return {'mask': encoded_img}
 
 
-    except:
+    except Exception as e:
+        print(e)
         return {'msg': 'mask generation failed'}
 
 if __name__ == '__main__':
