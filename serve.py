@@ -56,9 +56,9 @@ async def post_base64Image(request: Request):
 
         image = cv2.imread(filename)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (480, 480))
+        image_m = cv2.resize(image, (480, 480))
 
-        image = preprocess_input_smp(image, input_space='RGB', input_range=[0, 1], mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        image = preprocess_input_smp(image_m, input_space='RGB', input_range=[0, 1], mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         image = to_tensor(image)
 
         x_tensor = torch.from_numpy(image).to('cpu').unsqueeze(0)
@@ -68,7 +68,7 @@ async def post_base64Image(request: Request):
         pr_mask = (pr_mask * 255.0).astype(np.uint8)
 
         if imgstr.get("mask_type") == "rgba":
-            rgb = cv2.merge((pr_mask,pr_mask,pr_mask))
+            rgb = image_m * pr_mask # cv2.merge((pr_mask,pr_mask,pr_mask))
             rgba = cv2.cvtColor(rgb, cv2.COLOR_RGB2RGBA)
 
             rgba[:, :, 3] = pr_mask
