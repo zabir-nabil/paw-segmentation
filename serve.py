@@ -1,4 +1,5 @@
 from fastapi import Request, FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import base64
 import uuid
@@ -8,6 +9,18 @@ import cv2
 import torch
 
 app = FastAPI()
+
+# handling cors
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.model = torch.load('../best_model.pth', map_location=torch.device('cpu'))
 
 def preprocess_input_smp(x, mean=None, std=None, input_space="RGB", input_range=None, **kwargs):
