@@ -10,3 +10,5 @@ torchio
 Augmentor
 albumentations [imgaug]
 segmentation-models-pytorch==0.2.0 # latest version is broken as of writing this req file
+uvicorn
+fastapi
